@@ -1,0 +1,14 @@
+{
+  "phase": "{{N}}",
+  "status": "in-progress",
+  "goal": "{{VERIFIABLE_STOPPING_CONDITION — all X gates pass, all Y UAT steps documented, no unresolved contradictions, cost under budget}}",
+  "lastAction": "",
+  "gatesPassed": [],
+  "gatesFailed": [],
+  "gatesPending": ["{{N}}.1"],
+  "llmCost": "$0.00",
+  "tokenBudgetRemaining": "{{BUDGET}}",
+  "blocker": null,
+  "deviations": [],
+  "nextAction": "Run compliance pre-check, then invoke Implementer"
+}
