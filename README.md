@@ -31,6 +31,22 @@ leave room for it.
 And when the code contradicts the vision, work stops. The agent documents the contradiction
 and waits. Only you get to resolve it.
 
+## The DOX framework
+
+The kit also installs DOX, a small framework for keeping project documentation alive. The
+root `AGENTS.md` is the project-wide contract, and any folder that becomes a durable
+boundary (`src/`, `tests/`, and so on) gets its own child `AGENTS.md` with local rules.
+Before editing, the agent reads the chain of docs from the root down to whatever it's
+touching. After editing, it must update them. A child index in each doc records what every
+folder is for.
+
+This fills a gap the other pieces don't cover. The vision docs say what the project must
+be, and `.state/` remembers where the work stands, but neither tells the agent how to
+behave inside each part of the tree. DOX puts the operating rules next to the code they
+govern, and the update-after-editing rule means the docs can't quietly rot between phases.
+When a fresh agent, or a fresh context window, picks the project up in month three, it can
+reconstruct how everything works from the docs alone.
+
 ## Install
 
 Copy the `canon/` folder into your agent's skills directory:
@@ -65,6 +81,7 @@ Nothing moves forward until you accept the current phase.
 | The phase loop | Read, pre-check, implement, cold-verify, UAT, commit. The builder and the checker are never the same agent. |
 | Compliance checking | Every change compared against the vision, before and after implementation, logged append-only. |
 | `.state/` | Per-phase status JSON, independent verification reports, compliance log. Committed to git. |
+| DOX (`AGENTS.md`) | A root contract plus per-folder child docs that the agent must read before editing and update after. Keeps the project's rules alive between sessions. |
 
 ## Design principles
 
@@ -86,6 +103,7 @@ canon/                          <- the skill (this folder is what you install)
 ├── references/
 │   └── vision-interview.md     — the vision interview: rounds, checkability rule, ratification
 └── assets/templates/           — the copy-ready project kit
+    ├── AGENTS.md               — the DOX framework rail (root contract + child-doc rules)
     ├── Project Vision/         — canonical-docs contract + vision starter skeleton
     ├── Implementation Plan/    — master index, master prompt, start-phase prompt, phase template
     └── .state/                 — status JSON, compliance log, verification report
