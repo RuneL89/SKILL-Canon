@@ -11,8 +11,8 @@ spec docs are **canon** — the law every implementation and later change is jud
 Canon has five parts:
 
 1. `Project Vision/` — canonical, numbered spec docs. **The constitution and law of the project**: every implementation and every later change is compliance-checked against them.
-2. `Implementation Plan/` — the project decomposed into phases 0..N. Each phase is a standalone, independently valuable deliverable with automated gates, manual UAT steps, a hard approval checklist, and integration notes.
-3. A fixed per-phase loop — read → compliance pre-check → Implementer builds → Verifier cold-checks → Reporter presents UAT → user accepts → commit.
+2. `Implementation Plan/` — the project decomposed into phases 0..N. Each phase is a standalone, independently valuable deliverable with automated gates, UAT (Verifier pre-UAT mechanical checks + human-verifiable steps), a hard approval checklist, and integration notes.
+3. A fixed per-phase loop — read → compliance pre-check → Implementer builds → Verifier cold-checks **and runs every mechanical UAT check** → Reporter presents **human-verifiable UAT only** → user accepts → commit.
 4. Mandatory compliance checking against the vision docs, with a Contradiction Protocol (halt on contradiction; only the user resolves it).
 5. `.state/` — durable on-disk memory: per-phase status JSON, independent verification reports, append-only compliance log. "The agent forgets; the repo remembers."
 
@@ -78,15 +78,17 @@ canonical loop. The short version:
 1. Read the phase doc, the mapped vision docs (mapping: master prompt §4), and the root `AGENTS.md`.
 2. Run the compliance pre-check and log it to `.state/compliance-log.md`. Contradiction → **stop**, Contradiction Protocol.
 3. Set a verifiable stopping condition from the phase's approval checklist — never a vague goal.
-4. Keep the maker and checker separate: Implementer builds and runs tests; Verifier re-checks cold (no knowledge of implementation rationale) and re-runs tests independently; Reporter only presents UAT and results. Sub-agents communicate via `.state/phase-N-status.json`, not conversation.
-5. Record every deviation and all LLM spend in the status file. Pause at 80% of the token budget; never retry-loop a failing LLM call — fix the prompt instead.
-6. Apply the Golden Rule: do not start phase N+1 until every gate in phase N passes and the user has accepted UAT.
+4. Keep the maker and checker separate: Implementer builds and runs tests; Verifier re-checks cold (no knowledge of implementation rationale) and re-runs tests independently; Reporter only presents human-verifiable UAT and results. Sub-agents communicate via `.state/phase-N-status.json`, not conversation.
+5. **The UAT split:** every machine-verifiable check in a phase's UAT section is a Verifier pre-UAT check — executed and evidenced in `.state/phase-N-verification.md` BEFORE anything is presented to the user. The Reporter presents only human-verifiable steps: perceptual judgments (watching, listening, reading, visual acceptance) and explicit acceptance decisions. Never hand the user a step a machine could verify, and never perform, pre-fill, or record a human-verifiable step on the user's behalf.
+6. Record every deviation and all LLM spend in the status file. Pause at 80% of the token budget; never retry-loop a failing LLM call — fix the prompt instead.
+7. Apply the Golden Rule: do not start phase N+1 until every gate in phase N passes and the user has accepted UAT.
 
 ## Why the rules exist (don't skip these)
 
 * **Vision is law** — compliance checks compare code against the vision docs; if the vision is vague, contradictory, or stale, every downstream check is theater.
 * **Phases are contracts** — building everything at once is how you get a system where no part works and bugs compound across layers.
 * **Maker ≠ checker** — an agent that verifies its own work grades its own homework; the Verifier must check against the spec cold.
+* **UAT is split, not dumped** — a UAT list full of machine-checkable steps wastes the user's attention and disguises as "manual verification" what a Verifier should have proven first. Machines verify mechanics before presentation; the user gets only what only a human can do: judge and decide.
 * **Fixtures are sacred** — mutable test data makes it impossible to tell whether a failure is in the code or the data.
 * **State on disk** — sub-agents are stateless; if progress lives only in context, it is lost on every handoff.
 * **The user is the final arbiter** — agents present findings; only the user ratifies the vision, accepts phases, and resolves contradictions between code and vision.

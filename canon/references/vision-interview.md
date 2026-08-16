@@ -82,7 +82,9 @@ answers → reflect back a summary → get confirmation → note what will go in
 
 * How is correctness judged? What are the golden fixtures — the immutable test data that
   makes failures unambiguous ("if a test fails, the code is wrong, never the fixture")?
-* What must always be tested automatically vs. what is acceptable as manual UAT?
+* What must always be tested automatically vs. what is acceptable as human-verifiable UAT?
+  (Everything machine-checkable becomes a Verifier pre-UAT check; only perceptual judgments
+  and acceptance decisions reach the user.)
 * Performance/cost limits that count as law (these become token budgets and gate criteria).
 
 ## Drafting

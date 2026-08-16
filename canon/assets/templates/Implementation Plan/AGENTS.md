@@ -29,6 +29,9 @@ implementing agent.
 
 * Follow the Implementer / Verifier / Reporter sub-agent split from
   `MASTER_IMPLEMENTATION_PROMPT.md`
+* UAT sections split machine checks (Verifier pre-UAT, evidence in
+  `.state/phase-N-verification.md`, run BEFORE UAT presentation) from human-verifiable
+  steps (Reporter presents only the latter — perceptual judgment and acceptance decisions)
 * Golden fixtures (`{{FIXTURE_DIR}}`) never change once created
 
 ## Verification

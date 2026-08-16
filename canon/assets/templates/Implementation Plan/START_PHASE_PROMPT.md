@@ -38,10 +38,11 @@ Use the three sub-agents:
 
 **Implementer:** Write code, tests, fixtures. Run tests. Stay in budget. Write status file.
 
-**Verifier:** Check compliance against vision docs. Run tests independently. Report pass/fail
-with evidence to `.state/phase-{N}-verification.md`.
+**Verifier:** Check compliance against vision docs. Run tests independently. Run every
+mechanical UAT check from the phase doc (Verifier pre-UAT checks) before any UAT is
+presented. Report pass/fail with evidence to `.state/phase-{N}-verification.md`.
 
-**Reporter:** Present UAT steps to user. Summarize results. Do not modify code.
+**Reporter:** Present human-verifiable UAT steps only. Summarize results. Do not modify code.
 
 ### Step 5: Set the Goal
 
@@ -59,7 +60,8 @@ and total LLM cost is under ${BUDGET}.
 
 When the phase is complete, the Reporter presents:
 - Which gates passed/failed.
-- UAT steps with exact commands and expected output.
+- Human-verifiable UAT steps only (exact commands and expected output); mechanical checks
+  already verified by the Verifier are listed as passed with evidence.
 - Compliance status.
 - Token cost.
 - Recommendation: proceed to next phase or fix blockers.

@@ -77,7 +77,7 @@ Nothing moves forward until you accept the current phase.
 | Piece | Role |
 |---|---|
 | `Project Vision/` | The numbered spec docs, treated as law. Code is compliance-checked against them; contradictions halt work until you decide. |
-| `Implementation Plan/` | The project as phases 0..N. Each phase has an objective, exact files, automated gates, manual UAT, and a hard approval checklist. |
+| `Implementation Plan/` | The project as phases 0..N. Each phase has an objective, exact files, automated gates, UAT (split: verifier-run mechanical checks + human-verifiable steps), and a hard approval checklist. |
 | The phase loop | Read, pre-check, implement, cold-verify, UAT, commit. The builder and the checker are never the same agent. |
 | Compliance checking | Every change compared against the vision, before and after implementation, logged append-only. |
 | `.state/` | Per-phase status JSON, independent verification reports, compliance log. Committed to git. |

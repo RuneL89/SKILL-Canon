@@ -60,8 +60,8 @@ You must use three sub-agents, each with a distinct role:
 | Sub-agent | Role | When Invoked |
 |---|---|---|
 | **Implementer** | Writes code, runs tests, fixes bugs | For every implementation task |
-| **Verifier** | Checks compliance against vision docs, runs tests independently | After Implementer claims a gate is passed |
-| **Reporter** | Summarizes results, presents UAT steps to user, logs compliance | After Verifier confirms phase is complete |
+| **Verifier** | Checks compliance against vision docs, runs tests independently, executes every mechanical UAT check from the phase doc | After Implementer claims a gate is passed — and again before any UAT is presented |
+| **Reporter** | Summarizes results, presents human-verifiable UAT steps to user, logs compliance | After Verifier confirms phase is complete (mechanical checks green) |
 
 **Rules for sub-agents:**
 - The Implementer does not know if the Verifier will approve. It writes the best code it can.
@@ -69,6 +69,12 @@ You must use three sub-agents, each with a distinct role:
 - The Reporter does not modify code. It presents findings to the user.
 - Sub-agents run in isolated contexts. They do not share reasoning. Only final results pass
   between them.
+- **The UAT split:** every machine-verifiable check in a phase doc's UAT section is a
+  **Verifier pre-UAT check** — executed and evidenced in `.state/phase-{N}-verification.md`
+  **before** any UAT is presented. The Reporter presents only the human-verifiable steps:
+  perceptual judgments (watching, listening, reading, visual acceptance) and explicit
+  decisions. No agent may perform, pre-fill, or record a human-verifiable step, and no
+  acceptance decision is ever recorded unless the user explicitly stated it in the session.
 
 ### 1.4 Dynamic Prompting Between Sub-agents
 
@@ -154,7 +160,8 @@ Implement Phase {N} of {{PROJECT_NAME}} per the implementation plan and vision d
 2. Run the compliance check. If any contradiction is found, STOP and report it.
 3. Implement the code for this phase.
 4. Run the technical gates (automated tests).
-5. Document the UAT steps (manual verification steps for the user).
+5. Split the UAT steps: machine-verifiable checks go to the Verifier's pre-UAT run; only
+   human-verifiable steps are presented to the user.
 6. Have the Verifier sub-agent check compliance against vision docs.
 7. Have the Reporter sub-agent present results to the user.
 
@@ -166,13 +173,15 @@ Run tests until they pass. Stay within the token budget. Write the status file w
 
 ### Verifier
 Task: Read the phase document and vision documents. Check that the implementation matches
-the spec. Run the tests independently. Verify no contradictions exist. Report pass/fail
-for each gate with evidence to `.state/phase-{N}-verification.md`.
+the spec. Run the tests independently. Run every mechanical UAT check from the phase doc
+(Verifier pre-UAT checks) before any UAT is presented. Verify no contradictions exist.
+Report pass/fail for each gate with evidence to `.state/phase-{N}-verification.md`.
 
 ### Reporter
 Task: Read the status file and verifier report. Present a summary to the user: what was
-implemented, which gates passed, which UAT steps to perform, and what the expected results
-are. Do not modify code.
+implemented, which gates passed, which human-verifiable UAT steps to perform (mechanical
+checks are already green in the Verifier's report — list them as passed with evidence,
+never ask the user to execute them), and what the expected results are. Do not modify code.
 
 ## Compliance Log
 
@@ -218,6 +227,11 @@ Phase documents live in `Implementation Plan/`; vision documents live in `Projec
 ## 5. The Reporter's UAT Presentation Format
 
 When presenting UAT steps to the user, the Reporter must use this format:
+
+**Law:** present **only human-verifiable UAT steps** — perceptual judgments and explicit
+decisions. Every machine-verifiable check from the phase doc's UAT section must already be
+green in the Verifier's report; the Reporter lists those as passed with evidence and never
+asks the user to execute them.
 
 ```
 ╔══════════════════════════════════════════════════════════════╗

@@ -12,8 +12,8 @@ everything at once, then discovering that no part works.
 | Piece | Role |
 |---|---|
 | `Project Vision/` | Canonical numbered spec docs — **the constitution and law** of the project. Code is compliance-checked against them; contradictions halt work until the user decides. |
-| `Implementation Plan/` | The project as phases 0..N. Each phase: objective, exact files, automated gates, manual UAT, hard approval checklist, integration notes. |
-| The phase loop | Read → compliance pre-check → Implementer builds → Verifier cold-checks → Reporter presents UAT → user accepts → commit. Maker ≠ checker. |
+| `Implementation Plan/` | The project as phases 0..N. Each phase: objective, exact files, automated gates, UAT (split: Verifier-run mechanical checks + human-verifiable acceptance), hard approval checklist, integration notes. |
+| The phase loop | Read → compliance pre-check → Implementer builds → Verifier cold-checks + runs mechanical UAT checks → Reporter presents human-verifiable UAT only → user accepts → commit. Maker ≠ checker. |
 | Compliance checking | Every change compared against the vision, pre- and post-implementation, logged append-only. Contradiction Protocol: halt → document → user decides. |
 | `.state/` | Durable memory: per-phase status JSON, independent verification reports, compliance log. Committed to git. "The agent forgets; the repo remembers." |
 
@@ -29,7 +29,8 @@ Already installed if this folder is at `~/.agents/skills/canon/` (personal, all 
   then **guides you through writing the vision** (the constitution — it takes its time here on
   purpose), then decomposes the project into phases.
 * **During implementation:** say *"start phase N"* — the fixed loop runs: compliance pre-check,
-  Implementer/Verifier/Reporter sub-agents, UAT, commit. No phase N+1 until phase N passes.
+  Implementer/Verifier/Reporter sub-agents (Verifier runs every mechanical UAT check first;
+  the user sees only human-verifiable steps), UAT, commit. No phase N+1 until phase N passes.
 
 ## Contents
 
@@ -50,6 +51,8 @@ canon/
   real time sharpening it, and the user ratifies it before any phase is written.
 * **Phases are contracts.** No phase N+1 until every gate in phase N passes.
 * **Maker ≠ checker.** The Verifier checks cold, with no knowledge of the Implementer's rationale.
+* **UAT is split.** Machine-checkable steps are Verifier pre-UAT checks, evidenced before
+  presentation; the user gets only perceptual judgments and decisions.
 * **Golden fixtures are sacred.** If a test fails, the code is wrong — never the fixture.
 * **No retry loops.** Fix the prompt, not the code; token budgets are hard caps.
 * **The user is the final arbiter.** Agents present findings; only the user ratifies, accepts,

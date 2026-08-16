@@ -20,7 +20,7 @@ discovering that no part works. Each phase has:
 - A clear objective
 - Specific files to build
 - Technical approval gates (automated tests)
-- User acceptance tests (manual verification)
+- User acceptance tests (split: Verifier pre-UAT mechanical checks + human-verifiable steps)
 - A hard checklist that must be signed off before proceeding
 - Integration notes explaining what this phase produces and what the next phase expects
 

@@ -16,7 +16,8 @@
                              Implementer never has to invent structure
      3. Technical Gates    — automated tests with explicit pass criteria; EVERY gate has an
                              isolation test (component alone, no pipeline)
-     4. UAT                — manual steps with exact commands + expected output
+     4. UAT                — split: Verifier pre-UAT checks (mechanical) + human-verifiable
+                             steps only (perceptual judgment, explicit decisions)
      5. Approval Checklist — hard sign-off list
      6. Integration Notes  — contract with the previous and next phase
      Delete these HTML comments from the generated phase docs. -->
@@ -57,16 +58,21 @@ data shapes. Specify error handling.}}
 
 ## 4. User Acceptance Tests (UAT)
 
-<!-- UAT format: something the USER does — a command to run or a screen to open —
-     plus exactly what they should see and how to confirm it worked. -->
+<!-- UAT split (law): every machine-verifiable check is a Verifier pre-UAT check — the
+     Verifier sub-agent runs it and records evidence in .state/phase-{N}-verification.md
+     BEFORE any UAT is presented. Only human-verifiable steps reach the user; no agent may
+     perform, pre-fill, or record a human-verifiable step. -->
 
-### UAT {{N}}.1: {{USER_FACING_CAPABILITY}}
+### Verifier pre-UAT checks (mechanical)
 
-```bash
-{{exact command}}
-```
+- {{machine-verifiable assertion: a file exists and validates, output matches the spec, a
+  refusal path returns the exact error, a cost is logged, a page serves the expected bytes}}
 
-**Expected:** {{what the user should see, precisely enough to judge pass/fail}}
+### UAT {{N}}.1: {{USER_FACING_CAPABILITY}} — human-verifiable
+
+**The user {{judges|watches|listens|reads}} {{what}}:** {{the perceptual judgment or
+explicit decision only a human can make — never something a test could assert}}. Approve
+or request revision.
 
 ---
 
@@ -75,7 +81,8 @@ data shapes. Specify error handling.}}
 Before moving to Phase {{N+1}}, verify:
 
 - [ ] All {{X}} technical gates pass (`{{TEST_COMMAND}}` is green).
-- [ ] All {{Y}} UAT steps pass (manual verification).
+- [ ] Verifier pre-UAT checks green (evidence in `.state/phase-{{N}}-verification.md`).
+- [ ] All {{Y}} human-verifiable UAT steps pass (user acceptance).
 - [ ] {{phase-specific invariant}}
 - [ ] Total LLM cost for this phase is under {{BUDGET}}.
 - [ ] No code exists for {{NEXT_PHASE_COMPONENT}} (next phase's scope).
