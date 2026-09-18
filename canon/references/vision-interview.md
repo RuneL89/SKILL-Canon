@@ -13,6 +13,11 @@ it — that is why this stage exists.
 
 * **The user is the lawmaker; you are the drafter.** You ask, probe, sharpen, and write. The
   user decides. Never invent law and present it as the user's intent — propose, then confirm.
+* **Gate the model before writing law.** Vision docs are drafted and amended only in a
+  GLM-5.3 session (GLM-5.3-Flash does not qualify). Before the drafting step — and before any
+  amendment edit — check the model identity stated in your own context; if it is not GLM-5.3,
+  halt and ask the user to switch models. Do not draft on another model and do not delegate
+  the writing to a subagent.
 * **One round at a time.** Do not dump all questions at once. Finish a round, reflect the
   answers back in your own words, confirm, then move on.
 * **Push back.** If an answer is vague, contradictory, or uncheckable, say so and dig. Being
@@ -120,6 +125,8 @@ amend, update the docs and re-present — amendments are normal and cheap now, e
 
 The constitution can change, but deliberately:
 
+* **Same model gate as drafting:** amendment edits to vision docs happen only in a GLM-5.3
+  session (see Posture). Check, and halt and ask the user to switch if not.
 * Implementation contradicts vision → Contradiction Protocol (halt; user decides: accept =
   amend the vision doc in the same pass, or reject = roll back the code).
 * User requests a change → update the vision doc directly, note it in the compliance log.

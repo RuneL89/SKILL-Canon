@@ -7,6 +7,8 @@ description: Bootstrap and operate a vision-driven, phase-gated implementation s
 
 Set up and run a **vision-driven, phase-gated implementation system** in a project, where the
 spec docs are **canon** — the law every implementation and later change is judged against.
+Canon is built for **ZCode**: its sub-agent roles are named ZCode subagent definitions with
+model pins the harness enforces (see Model pins below).
 
 Canon has five parts:
 
@@ -22,6 +24,29 @@ Bundled templates live in `assets/templates/` (paths below are relative to this 
 
 * **Bootstrap** — the project has no `Implementation Plan/MASTER_IMPLEMENTATION_PROMPT.md` yet, or the user asks to set up / start a new project / write the vision.
 * **Operate** — canon is set up in the project and the user asks to start/continue a phase, run gates, do a compliance check, or present UAT.
+
+## Model pins (mandatory)
+
+Sub-agent roles are pinned to models, enforced by ZCode subagent definitions installed in the
+user's agents directory (`~/.zcode/cli/agents/` — `canon-implementer`, `canon-verifier`,
+`canon-reporter`). Spawn the named agents by `subagent_type`; never rebuild the roles as bare
+spawns:
+
+| Role | Named agent | Pinned model |
+|---|---|---|
+| Implementer | `canon-implementer` | glm-5.3-flash |
+| Verifier | `canon-verifier` | deepseek-v4-pro |
+| Reporter | `canon-reporter` | glm-5.3-flash |
+
+* If a named agent is not available, or its pinned model cannot run, **halt and ask the
+  user**. Never substitute another model or agent silently.
+* **Vision law is written on GLM-5.3 only.** Before drafting or amending any `Project Vision/`
+  document (Stage B drafting and every later amendment), check the model identity stated in
+  your own context. It must be GLM-5.3 — GLM-5.3-Flash does not qualify. If it is not, halt
+  and ask the user to switch models before writing law; vision drafting has no subagent, so
+  the session is the only enforcement point.
+* Only these three roles are pinned. Incidental subagents (research, review, search) keep the
+  harness default model.
 
 ## Mode 1: Bootstrap
 
@@ -43,7 +68,7 @@ Read `references/vision-interview.md` and follow it. Summary:
 
 1. **Interview the user in rounds** — purpose & users → non-goals → core principles → architecture → domain concepts → quality bar. One round at a time; reflect understanding back after each round.
 2. **Every rule must be checkable.** If you cannot write a compliance check for a statement, it is fluff — sharpen it or cut it. "Fast" is fluff; "the CLI answers a query in under 2s on a 10k-page corpus" is law.
-3. **Draft the numbered vision docs** (`01_PRODUCT_VISION_AND_ARCHITECTURE.md` + one per durable domain concept). Written for a reader with zero prior context.
+3. **Draft the numbered vision docs** (`01_PRODUCT_VISION_AND_ARCHITECTURE.md` + one per durable domain concept). Written for a reader with zero prior context. Run the model gate first (Model pins): drafting and amending vision law happens only in a GLM-5.3 session — check, and halt and ask the user to switch if not.
 4. **Ratification.** Present the drafts and get the user's explicit approval before writing any phase doc. The user is the lawmaker; the agent only drafts. Record later amendments the same way — vision changes are deliberate, never drive-by.
 
 ### Stage C — Implementation plan
@@ -78,7 +103,7 @@ canonical loop. The short version:
 1. Read the phase doc, the mapped vision docs (mapping: master prompt §4), and the root `AGENTS.md`.
 2. Run the compliance pre-check and log it to `.state/compliance-log.md`. Contradiction → **stop**, Contradiction Protocol.
 3. Set a verifiable stopping condition from the phase's approval checklist — never a vague goal.
-4. Keep the maker and checker separate: Implementer builds and runs tests; Verifier re-checks cold (no knowledge of implementation rationale) and re-runs tests independently; Reporter only presents human-verifiable UAT and results. Sub-agents communicate via `.state/phase-N-status.json`, not conversation.
+4. Keep the maker and checker separate: spawn the pinned named agents — `canon-implementer` builds and runs tests; `canon-verifier` re-checks cold (no knowledge of implementation rationale), re-runs tests independently, and runs every mechanical UAT check; `canon-reporter` only presents human-verifiable UAT and results. Sub-agents communicate via `.state/phase-N-status.json`, not conversation.
 5. **The UAT split:** every machine-verifiable check in a phase's UAT section is a Verifier pre-UAT check — executed and evidenced in `.state/phase-N-verification.md` BEFORE anything is presented to the user. The Reporter presents only human-verifiable steps: perceptual judgments (watching, listening, reading, visual acceptance) and explicit acceptance decisions. Never hand the user a step a machine could verify, and never perform, pre-fill, or record a human-verifiable step on the user's behalf.
 6. Record every deviation and all LLM spend in the status file. Pause at 80% of the token budget; never retry-loop a failing LLM call — fix the prompt instead.
 7. Apply the Golden Rule: do not start phase N+1 until every gate in phase N passes and the user has accepted UAT.

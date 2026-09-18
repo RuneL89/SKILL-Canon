@@ -55,15 +55,18 @@ Implement the component.
 
 ### 1.3 Sub-Agent Architecture
 
-You must use three sub-agents, each with a distinct role:
+You must use three sub-agents, each with a distinct role. Each role is a named, model-pinned
+ZCode subagent definition — spawn it by name:
 
-| Sub-agent | Role | When Invoked |
-|---|---|---|
-| **Implementer** | Writes code, runs tests, fixes bugs | For every implementation task |
-| **Verifier** | Checks compliance against vision docs, runs tests independently, executes every mechanical UAT check from the phase doc | After Implementer claims a gate is passed — and again before any UAT is presented |
-| **Reporter** | Summarizes results, presents human-verifiable UAT steps to user, logs compliance | After Verifier confirms phase is complete (mechanical checks green) |
+| Sub-agent | Named agent (`subagent_type`) | Pinned model | When Invoked |
+|---|---|---|---|
+| **Implementer** | `canon-implementer` | glm-5.3-flash | For every implementation task |
+| **Verifier** | `canon-verifier` | deepseek-v4-pro | After Implementer claims a gate is passed — and again before any UAT is presented |
+| **Reporter** | `canon-reporter` | glm-5.3-flash | After Verifier confirms phase is complete (mechanical checks green) |
 
 **Rules for sub-agents:**
+- Spawn the named agents above. If one is not available, or its pinned model cannot run,
+  halt and ask the user — never substitute another model or agent silently.
 - The Implementer does not know if the Verifier will approve. It writes the best code it can.
 - The Verifier does not know the Implementer's rationale. It checks against the spec cold.
 - The Reporter does not modify code. It presents findings to the user.
@@ -167,17 +170,22 @@ Implement Phase {N} of {{PROJECT_NAME}} per the implementation plan and vision d
 
 ## Sub-Agent Invocation
 
-### Implementer
+Spawn each role by its pinned named agent (model pins live in the agent definitions):
+`canon-implementer` (glm-5.3-flash), `canon-verifier` (deepseek-v4-pro),
+`canon-reporter` (glm-5.3-flash). If one is missing or its model cannot run: halt and ask
+the user — no substitutes.
+
+### Implementer (`canon-implementer`)
 Task: Implement Phase {N} per the specification. Write all code, tests, and fixtures.
 Run tests until they pass. Stay within the token budget. Write the status file when done.
 
-### Verifier
+### Verifier (`canon-verifier`)
 Task: Read the phase document and vision documents. Check that the implementation matches
 the spec. Run the tests independently. Run every mechanical UAT check from the phase doc
 (Verifier pre-UAT checks) before any UAT is presented. Verify no contradictions exist.
 Report pass/fail for each gate with evidence to `.state/phase-{N}-verification.md`.
 
-### Reporter
+### Reporter (`canon-reporter`)
 Task: Read the status file and verifier report. Present a summary to the user: what was
 implemented, which gates passed, which human-verifiable UAT steps to perform (mechanical
 checks are already green in the Verifier's report — list them as passed with evidence,
@@ -263,7 +271,7 @@ The user runs the UAT steps manually and reports back. If any UAT fails, the loo
 
 1. **Read before writing.** Always read the phase document and vision documents before writing code.
 2. **Check compliance.** Every change must be checked against the vision. No exceptions.
-3. **Use sub-agents.** Implementer writes, Verifier checks, Reporter presents. Never combine roles.
+3. **Use the pinned sub-agents.** Spawn `canon-implementer` (writes), `canon-verifier` (checks), `canon-reporter` (presents). Never combine roles, never substitute models without asking.
 4. **Stay in budget.** Hard token caps per phase. Pause at 80% and report.
 5. **Log everything.** Status files, compliance logs, and test results are mandatory.
 6. **Fail loud.** If a gate fails, report it clearly. Do not hide failures.

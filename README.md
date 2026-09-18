@@ -3,6 +3,10 @@
 Harness engineering and loop engineering for AI coding agents, packaged as a single skill.
 You write the spec once, as binding law, and the agent has to answer to it on every change.
 
+Canon is built for ZCode. The three roles in its loop are real ZCode subagents, and the
+model each one runs on is pinned in the subagent definition, so the harness enforces it —
+no prompting required.
+
 ## The problem
 
 Give an AI agent a big project and it does what agents do. It builds everything at once,
@@ -47,6 +51,20 @@ govern, and the update-after-editing rule means the docs can't quietly rot betwe
 When a fresh agent, or a fresh context window, picks the project up in month three, it can
 reconstruct how everything works from the docs alone.
 
+## Built for ZCode
+
+The loop spawns three named subagents: `canon-implementer`, `canon-verifier`, and
+`canon-reporter`. Each is a ZCode subagent definition — a markdown file with a `model:` line
+in its frontmatter. The implementer and reporter run on glm-5.3-flash, the verifier on
+deepseek-v4-pro. ZCode reads the pin and launches the agent on that model every time, so
+"always verify with a different model" is a property of the setup, not an instruction the
+agent might forget.
+
+Two more rules ride on the same mechanism. Vision docs are only written in a GLM-5.3
+session — if you start bootstrap on another model, canon halts and asks you to switch
+before it drafts any law. And if a named subagent is missing or its pinned model can't
+run, canon stops and asks instead of quietly substituting whatever is available.
+
 ## Install
 
 Copy the `canon/` folder into your agent's skills directory:
@@ -55,7 +73,11 @@ Copy the `canon/` folder into your agent's skills directory:
 git clone https://github.com/RuneL89/SKILL-Canon.git
 cp -r SKILL-Canon/canon ~/.agents/skills/      # personal: available in all projects
 # or into <project>/.agents/skills/            # project-local: one project only
+cp SKILL-Canon/canon/agents/*.md ~/.zcode/cli/agents/   # the pinned subagents
 ```
+
+The last line installs the three subagent definitions. They show up under Settings →
+Subagents, and canon won't spawn unpinned roles without them.
 
 You can also download the repo as a zip and drop `canon/` into one of those locations
 manually. The folder name and the `name:` field in `SKILL.md` must both be `canon` (they
@@ -90,6 +112,9 @@ Nothing moves forward until you accept the current phase.
 * Phases are contracts. No phase N+1 until every gate in phase N passes.
 * Maker is not checker. The verifier checks cold, with no knowledge of the implementer's
   rationale.
+* Models are pinned. The implementer and reporter run glm-5.3-flash, the verifier runs
+  deepseek-v4-pro, and ZCode enforces both — a missing pin stops the loop rather than
+  degrading it.
 * Golden fixtures are sacred. If a test fails, the code is wrong, never the fixture.
 * No retry loops. Fix the prompt, not the code. Token budgets are hard caps.
 * The user is the final arbiter. Agents present findings; only you ratify, accept, and
@@ -100,6 +125,7 @@ Nothing moves forward until you accept the current phase.
 ```
 canon/                          <- the skill (this folder is what you install)
 ├── SKILL.md                    — bootstrap (4 stages) + operate modes
+├── agents/                     — the three model-pinned subagent definitions
 ├── references/
 │   └── vision-interview.md     — the vision interview: rounds, checkability rule, ratification
 └── assets/templates/           — the copy-ready project kit

@@ -34,15 +34,17 @@ Before writing any code:
 
 ### Step 4: Invoke Sub-Agents
 
-Use the three sub-agents:
+Use the three pinned named sub-agents — `canon-implementer` (glm-5.3-flash),
+`canon-verifier` (deepseek-v4-pro), `canon-reporter` (glm-5.3-flash). If one is not
+available or its pinned model cannot run, halt and ask the user; never substitute silently.
 
-**Implementer:** Write code, tests, fixtures. Run tests. Stay in budget. Write status file.
+**canon-implementer:** Write code, tests, fixtures. Run tests. Stay in budget. Write status file.
 
-**Verifier:** Check compliance against vision docs. Run tests independently. Run every
+**canon-verifier:** Check compliance against vision docs. Run tests independently. Run every
 mechanical UAT check from the phase doc (Verifier pre-UAT checks) before any UAT is
 presented. Report pass/fail with evidence to `.state/phase-{N}-verification.md`.
 
-**Reporter:** Present human-verifiable UAT steps only. Summarize results. Do not modify code.
+**canon-reporter:** Present human-verifiable UAT steps only. Summarize results. Do not modify code.
 
 ### Step 5: Set the Goal
 

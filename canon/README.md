@@ -4,6 +4,10 @@ A reusable agent skill that bootstraps and operates a **vision-driven, phase-gat
 implementation system** in any software project — where the spec docs are written as
 **canon**, the binding law every implementation and later change is compliance-checked against.
 
+**Built for ZCode.** The loop's three sub-agent roles are named ZCode subagent definitions,
+and each carries a model pin that ZCode itself enforces at spawn time. The agent definitions
+ship in `agents/` — copy them to `~/.zcode/cli/agents/` during install.
+
 Extracted from a real project where it prevented the classic AI-coding failure mode: building
 everything at once, then discovering that no part works.
 
@@ -23,6 +27,15 @@ Already installed if this folder is at `~/.agents/skills/canon/` (personal, all 
 `<project>/.agents/skills/canon/` (one project). The folder name and the `name:` in
 `SKILL.md` must both be `canon`.
 
+The model pins need the three ZCode subagent definitions installed too:
+
+```bash
+cp agents/*.md ~/.zcode/cli/agents/
+```
+
+They show up under Settings → Subagents. Without them, canon halts and asks rather than
+spawning unpinned roles.
+
 ## Use
 
 * **New / empty project:** say *"set up canon"* — the agent scaffolds the three folders,
@@ -37,6 +50,7 @@ Already installed if this folder is at `~/.agents/skills/canon/` (personal, all 
 ```
 canon/
 ├── SKILL.md                      — bootstrap (4 stages) + operate modes
+├── agents/                       — the three model-pinned ZCode subagent definitions
 ├── references/
 │   └── vision-interview.md       — Stage B guide: interview rounds, checkability rule, ratification
 └── assets/templates/             — the copy-ready kit
@@ -51,6 +65,9 @@ canon/
   real time sharpening it, and the user ratifies it before any phase is written.
 * **Phases are contracts.** No phase N+1 until every gate in phase N passes.
 * **Maker ≠ checker.** The Verifier checks cold, with no knowledge of the Implementer's rationale.
+* **Models are pinned.** Implementer and Reporter run on glm-5.3-flash, the Verifier on
+  deepseek-v4-pro — enforced by named agent definitions, not prompt text; vision law is only
+  written in a GLM-5.3 session. Missing pin → halt and ask, never substitute.
 * **UAT is split.** Machine-checkable steps are Verifier pre-UAT checks, evidenced before
   presentation; the user gets only perceptual judgments and decisions.
 * **Golden fixtures are sacred.** If a test fails, the code is wrong — never the fixture.
