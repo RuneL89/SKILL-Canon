@@ -28,7 +28,7 @@ Bundled templates live in `assets/templates/` (paths below are relative to this 
 ## Model pins (mandatory)
 
 Sub-agent roles are pinned to models, enforced by ZCode subagent definitions installed in the
-user's agents directory (`~/.zcode/cli/agents/` — `canon-implementer`, `canon-verifier`,
+user's agents directory (`~/.zcode/agents/` — `canon-implementer`, `canon-verifier`,
 `canon-reporter`). Spawn the named agents by `subagent_type`; never rebuild the roles as bare
 spawns:
 

@@ -73,7 +73,7 @@ Copy the `canon/` folder into your agent's skills directory:
 git clone https://github.com/RuneL89/SKILL-Canon.git
 cp -r SKILL-Canon/canon ~/.agents/skills/      # personal: available in all projects
 # or into <project>/.agents/skills/            # project-local: one project only
-cp SKILL-Canon/canon/agents/*.md ~/.zcode/cli/agents/   # the pinned subagents
+cp SKILL-Canon/canon/agents/*.md ~/.zcode/agents/   # the pinned subagents
 ```
 
 The last line installs the three subagent definitions. They show up under Settings →

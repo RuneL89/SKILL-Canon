@@ -6,7 +6,7 @@ implementation system** in any software project — where the spec docs are writ
 
 **Built for ZCode.** The loop's three sub-agent roles are named ZCode subagent definitions,
 and each carries a model pin that ZCode itself enforces at spawn time. The agent definitions
-ship in `agents/` — copy them to `~/.zcode/cli/agents/` during install.
+ship in `agents/` — copy them to `~/.zcode/agents/` during install.
 
 Extracted from a real project where it prevented the classic AI-coding failure mode: building
 everything at once, then discovering that no part works.
@@ -30,7 +30,7 @@ Already installed if this folder is at `~/.agents/skills/canon/` (personal, all 
 The model pins need the three ZCode subagent definitions installed too:
 
 ```bash
-cp agents/*.md ~/.zcode/cli/agents/
+cp agents/*.md ~/.zcode/agents/
 ```
 
 They show up under Settings → Subagents. Without them, canon halts and asks rather than
